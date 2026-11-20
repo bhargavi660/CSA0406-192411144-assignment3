@@ -1,0 +1,11 @@
+1024-byte pages:
+Enter logical address (-1 to exit): Logical 1023 -> page 0, offset 1023 -> physical 3071
+Enter logical address (-1 to exit): Logical 1024 -> page 1, offset 0 -> physical 5120
+Enter logical address (-1 to exit): Logical 4095 -> page 3, offset 1023 -> physical 8191
+Enter logical address (-1 to exit): PAGE FAULT: address 4096 (page 4) beyond 4 allocated pages
+Enter logical address (-1 to exit): 2048-byte pages:
+Enter logical address (-1 to exit): Logical 2047 -> page 0, offset 2047 -> physical 6143
+Enter logical address (-1 to exit): Logical 2048 -> page 1, offset 0 -> physical 10240
+Enter logical address (-1 to exit): Logical 8191 -> page 3, offset 2047 -> physical 16383
+Enter logical address (-1 to exit): PAGE FAULT: address 8192 (page 4) beyond 4 allocated pages
+Enter logical address (-1 to exit): 

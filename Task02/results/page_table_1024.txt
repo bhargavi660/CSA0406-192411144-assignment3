@@ -1,0 +1,2 @@
+Enter logical address (-1 to exit): Logical 1024 -> page 1, offset 0 -> physical 5120
+Enter logical address (-1 to exit): 

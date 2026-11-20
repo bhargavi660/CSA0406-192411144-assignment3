@@ -1,0 +1,152 @@
+$ bash build.sh
+dlopen_app.c: In function ‘main’:
+dlopen_app.c:14:18: warning: ISO C forbids conversion of object pointer to function pointer type [-Wpedantic]
+   14 |     demo_fn fn = (demo_fn)dlsym(handle, "demo_transform");
+      |                  ^
+exit=0
+$ gcc -std=c11 -Wall -Wextra -Wpedantic -O2 page_table.c -o page_table
+exit=0
+$ gcc -std=c11 -Wall -Wextra -Wpedantic -O2 page_table_size.c -o page_table_size
+exit=0
+$ gcc -std=c11 -Wall -Wextra -Wpedantic -O2 eat.c -o eat
+exit=0
+$ gcc -std=c11 -Wall -Wextra -Wpedantic -O2 fragmentation.c -o fragmentation
+exit=0
+$ ./eat 0.95 100 10 100
+No-TLB EAT: 100.000 ns
+TLB EAT: 115.000 ns
+exit=0
+$ python3 tlb_ratio.py
+exit=0
+$ gcc -std=c11 -Wall -Wextra -Wpedantic -O2 segment_table.c -o segment_table
+exit=0
+$ gcc -std=c11 -Wall -Wextra -Wpedantic -O2 safe_seg_fault.c -o safe_seg_fault
+safe_seg_fault.c: In function ‘main’:
+safe_seg_fault.c:12:9: warning: array subscript 0 is outside array bounds of ‘volatile int[0]’ [-Warray-bounds=]
+   12 |         *bad = 42;
+      |         ^~~~
+cc1: note: source object is likely at address zero
+exit=0
+$ gcc -std=c11 -Wall -Wextra -Wpedantic -O2 segment_alloc.c -o segment_alloc
+exit=0
+$ ./segment_table
+segment 0 offset 0 -> physical 100
+segment 0 offset 100 -> physical 200
+segment 0 offset 101 -> LIMIT VIOLATION (limit 100)
+segment 1 offset 150 -> physical 650
+segment 1 offset 200 -> physical 700
+segment 2 offset 149 -> physical 1149
+segment 7 offset 90 -> physical 990
+segment 7 offset 91 -> LIMIT VIOLATION (limit 90)
+exit=0
+$ ./safe_seg_fault
+Child received signal 11
+exit=0
+$ ./segment_alloc
+policy=first-fit; seed=0x5EA2026; external_fragmentation=unallocated_noncontiguous_runs
+LOAD 1 size=191 at=0
+LOAD 2 size=196 at=191
+LOAD 3 size=37 at=387
+LOAD 4 size=210 at=424
+LOAD 5 size=133 at=634
+LOAD 6 size=238 at=767
+LOAD 7 size=105 at=1005
+LOAD 8 size=180 at=1110
+LOAD 9 size=153 at=1290
+LOAD 10 size=38 at=1443
+REMOVE indices 0-9; conceptual deterministic removal complete
+LOAD 11 size=141 at=0
+LOAD 12 size=224 at=141
+LOAD 13 size=159 at=365
+LOAD 14 size=166 at=524
+LOAD 15 size=75 at=690
+LOAD 16 size=142 at=765
+LOAD 17 size=211 at=907
+LOAD 18 size=74 at=1118
+LOAD 19 size=19 at=1192
+LOAD 20 size=126 at=1211
+allocated_bytes=2818
+exit=0
+$ gcc -std=c11 -Wall -Wextra -Wpedantic -O2 fault_access.c -o fault_access
+exit=0
+$ gcc -std=c11 -Wall -Wextra -Wpedantic -O2 cow_demo.c -o cow_demo
+exit=0
+$ ./cow_demo
+COW demo: parent maxrss=9648 KiB; child exit_status=0
+This measurement does not prove savings; it reports availability only.
+exit=0
+$ python3 page_fault_calculator.py
+Assumption: fault service time includes page transfer and restart; replace value if restart is separate.
+fault_rate=0.001  EAT=8099.900 ns
+fault_rate=1e-05  EAT=179.999 ns
+fault_rate=1e-06  EAT=108.000 ns
+10_percent_slowdown_fault_rate=1.2500156252e-06
+exit=0
+$ python3 reference_string_faults.py
+exit=0
+$ gcc -std=c11 -Wall -Wextra -Wpedantic -O2 page_replacement.c -o page_replacement
+exit=0
+$ gcc -std=c11 -Wall -Wextra -Wpedantic -O2 lru_todo.c -o lru_todo
+exit=0
+$ gcc -std=c11 -Wall -Wextra -Wpedantic -O2 benchmark.c -o benchmark
+exit=0
+$ ./page_replacement
+algorithm,frames,faults
+FIFO,3,15
+LRU,3,12
+Optimal,3,9
+Clock,3,14
+FIFO,4,10
+LRU,4,8
+Optimal,4,8
+Clock,4,9
+exit=0
+$ ./lru_todo
+LRU supplied-TODO faults=10
+exit=0
+$ ./benchmark
+references=100000 faults=100000 elapsed_seconds=0.001700
+exit=0
+$ python3 generate_workloads.py
+exit=0
+$ python3 disk_calculator.py
+RAID0 capacity=24.0 TB usable
+RAID1 minimum2; capacity=4.0 TB usable
+RAID5 minimum3; capacity=20.0 TB usable
+RAID10 minimum4; capacity=12.0 TB usable
+RAID6 minimum4; capacity=16.0 TB usable
+exit=0
+$ python3 read_file_benchmark.py README.md --mi-b 1
+bytes_read=226 elapsed_s=0.038000
+exit=0
+$ gcc -std=c11 -Wall -Wextra -Wpedantic -O2 edge_latencies.c -o edge_latencies
+exit=0
+$ gcc -std=c11 -Wall -Wextra -Wpedantic -O2 edge_model.c -o edge_model
+exit=0
+$ ./edge_latencies 16777216 1000
+mlock succeeded
+buffer_bytes=16777216 loops=1000 elapsed_ns=85460 average_sample_ns=57
+exit=0
+$ ./edge_model
+model control pages locked/resident=true
+exit=0
+$ python3 memory_budget.py
+OS=512 control=128 logging=128 ML=1500 total=2268 MiB
+OVER_BY=220 MiB
+exit=0
+$ uname -a
+Linux Bhargavi 6.18.33.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun 18 21:54:43 UTC 2026 x86_64 GNU/Linux
+exit=0
+$ lsb_release -a
+Distributor ID:	Ubuntu
+Description:	Ubuntu 26.04 LTS
+Release:	26.04
+Codename:	resolute
+exit=0
+$ gcc --version
+gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+Copyright (C) 2025 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+exit=0
